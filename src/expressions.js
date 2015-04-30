@@ -150,6 +150,21 @@ StringExpression.prototype.compile = function() {
   return JSON.stringify(this.string);
 };
 
+// A WhileExpression compiles to a JavaScript while loop.
+function WhileExpression(condition, body) {
+  this.condition = condition;
+  this.body = body;
+}
+
+WhileExpression.prototype.compile = function() {
+  var loopHeader = 'var result = "";\nwhile (' + this.condition.compile() +
+    ') {';
+  var loopCode = 'result = ' + this.body.compile() + ';';
+  var functionBody = loopHeader + '\n' + indentCode(loopCode) + '\n}\n' +
+    'return result;';
+  return '(function() {\n' + indentCode(functionBody) + '\n})()';
+};
+
 // indentCode adds a level of indentation to a block of code.
 function indentCode(code) {
   var lines = code.split('\n');

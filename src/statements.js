@@ -7,7 +7,6 @@ function CommandStatement(tokens) {
   this.arguments = tokens.slice(1);
 }
 
-// compile generates a function call for the command.
 CommandStatement.prototype.compile = function() {
   var res = 'runtime.commands[' + this.name.compile() + '](';
   for (var i = 0, len = this.arguments.length; i < len; ++i) {
@@ -65,7 +64,7 @@ ConditionStatement.prototype.compile = function() {
   }
 };
 
-// A StringStatement compiles to a javascript string.
+// A StringStatement compiles to a JavaScript string.
 function StringStatement(str) {
   this.string = str;
 }

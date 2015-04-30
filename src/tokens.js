@@ -44,7 +44,7 @@ Scanner.prototype.skipRequiredSpace = function() {
   if (this.done()) {
     return;
   }
-  
+
   // Make sure at least one character is consumed.
   var cur = this.index;
   this.skipSpace();
@@ -79,22 +79,22 @@ function isSpace(s) {
 function parseLines(s) {
   var rawLines = s.split('\n');
   var result = [];
-  
+
   for (var i = 0, len = rawLines.length; i < len; ++i) {
     var number = i+1;
     var text = trimWhitespace(rawLines[i]);
-    
+
     // If the line is a comment or is blank, skip it.
     if (text === '' || text[0] === '#') {
       continue;
     }
-    
+
     // If the line is a normal line, append it.
     if (text[text.length-1] !== '\\') {
       result.push({text: text, number: number});
       continue;
     }
-    
+
     // Keep reading lines until there's no line continuation.
     text = text.substring(0, text.length-1);
     for (++i; i < len; ++i) {
@@ -107,16 +107,16 @@ function parseLines(s) {
         break;
       }
     }
-    
+
     // If the loop terminated because i === rawLines.length, then the last line
     // ended with a \.
     if (i === rawLines.length) {
       throw new ParseError(rawLines.length, 'unexpected \\ at end of input');
     }
-    
+
     result.push({text: text, number: number});
   }
-  
+
   return result;
 }
 
@@ -139,13 +139,13 @@ function readCommand(scanner) {
       scanner.unread();
       tokens.push(readRaw(scanner));
     }
-    
+
     // If this is the end of the line then we should trigger a syntax error
     // since there was no ')'.
     if (scanner.done()) {
       break;
     }
-    
+
     // Skip the next bunch of whitespace or detect a ')' character.
     var next = scanner.next();
     if (next === ')') {
@@ -163,9 +163,9 @@ function readEscape(scanner) {
   if (scanner.done()) {
     throw new LineError('no escape code');
   }
-  
+
   // TODO: support hex escapes.
-  
+
   var char = scanner.next();
   var res = {'n': '\n', 'r': '\r', 'a': '\a', 't': '\t'}[char];
   if ('undefined' === typeof res) {

@@ -29,7 +29,7 @@ echo "(function() {
 " >build/pragmash.js
 
 # Read the source file and indent it.
-cat src/*.js | sed -e 's/^/  /g' >>build/pragmash.js
+cat src/*.js | sed -e 's/^/  /g' | sed -e 's/[ \t]*$//g' >>build/pragmash.js
 
 echo "" >>build/pragmash.js
 echo "})();" >>build/pragmash.js

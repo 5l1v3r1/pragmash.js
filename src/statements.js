@@ -37,7 +37,7 @@ function ConditionStatement(tokens) {
   } else {
     this.not = false;
   }
-  
+
   this.statements = [];
   for (var i = 0, len = tokens.length; i < len; ++i) {
     this.statements[i] = tokenToStatement(tokens[i]);

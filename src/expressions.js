@@ -91,38 +91,29 @@ function ForExpression(lineNumber, expression, body, variable, index) {
 }
 
 ForExpression.prototype.compile = function() {
-  var countVariable = 'len' + this.lineNumber;
-  var indexVariable = 'index' + this.lineNumber;
-  var listVariable = 'list' + this.lineNumber;
-  var resultVariable = 'result' + this.lineNumber;
+  // var list = runtime.elements(...);
+  // var result = "";
+  var codeBeginning = 'var list = runtime.elements(' +
+    this.expression.compile() + ');\nvar result = "";';
 
-  // var listXX = runtime.elements(...);
-  // var resultXX = "";
-  var codeBeginning = 'var ' + listVariable + ' = runtime.elements(' +
-    this.expression.compile() + ');\nvar ' + resultVariable + ' = "";';
-
-  // for (var indexXX = 0, lenXX = 0; indexXX < lenXX; ++indexXX) {
-  var loopBeginning = 'for (var ' + indexVariable + ' = 0, ' + countVariable +
-    ' = ' + listVariable + '.length; ' + indexVariable + ' < ' + countVariable +
-    '; ++' + indexVariable + ') {\n';
+  var loopBeginning = 'for (var i = 0, len = list.length; i < len; ++i) {\n';
 
   var loopBody = [];
   if (this.index) {
-    // runtime.commands.set(XX, ..., indexXX);
+    // runtime.commands.set(line#, ..., i);
     loopBody.push('runtime.commands.set(' + this.lineNumber + ', ' +
-      this.index.compile() + ', ' + indexVariable + ')');
+      this.index.compile() + ', i)');
   }
   if (this.variable) {
-    // runtime.command.set(XX, ..., listXX[indexXX]);
+    // runtime.command.set(line#, ..., list[i]);
     loopBody.push('runtime.commands.set(' + this.lineNumber + ', ' +
-      this.variable.compile(), ', ' + listVariable + '[' + indexVariable +'])');
+      this.variable.compile(), ', list[i])');
   }
-  // resultXX = ...;
-  loopBody.push(resultVariable + ' = ' + this.body.compile() + ';');
+  loopBody.push('result = ' + this.body.compile() + ';');
 
   var loopCode = indentCode(loopBody.join('\n'));
-  var functionBody = codeBeginning + loopBeginning + loopCode + '\n}\nreturn' +
-    resultVariable + ';';
+  var functionBody = codeBeginning + loopBeginning + loopCode +
+    '\n}\nreturn result;';
 
   return '(function() {\n' + indentCode(functionBody) + '\n})()';
 };
